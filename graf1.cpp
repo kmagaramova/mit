@@ -1,82 +1,72 @@
 ﻿#include <iostream>
 #include <vector>
+#include <set>
+#include <stack>
 #include <queue>
-#include <stack>  // Для DFS со стеком
+
 using namespace std;
 
-// DFS со стеком (итеративный)
-void DFS(int startVertex, const vector<vector<int>>& adjList) {
-    vector<bool> visited(adjList.size(), false);
+void DFS(int n, vector<set<int>> adjList, int start) {
+    vector<bool> visited(n, false);
     stack<int> s;
-
-    s.push(startVertex);
+    s.push(start);
 
     cout << "DFS: ";
     while (!s.empty()) {
-        int vertex = s.top();
+        int v = s.top();
         s.pop();
-
-        if (!visited[vertex]) {
-            visited[vertex] = true;
-            cout << vertex << " ";
-
-            // Добавляем соседей в обратном порядке
-            for (auto it = adjList[vertex].rbegin(); it != adjList[vertex].rend(); ++it) {
-                if (!visited[*it]) {
-                    s.push(*it);
-                }
+        if (!visited[v]) {
+            visited[v] = true;
+            cout << v << " ";
+            for (auto it = adjList[v].rbegin(); it != adjList[v].rend(); ++it) {
+                if (!visited[*it]) s.push(*it);
             }
         }
     }
     cout << endl;
 }
 
-// BFS (очередь)
-void BFS(int startVertex, const vector<vector<int>>& adjList) {
-    vector<bool> visited(adjList.size(), false);
+void BFS(int n, vector<set<int>> adjList, int start) {
+    vector<bool> visited(n, false);
+    visited.assign(n, false);
     queue<int> q;
-
-    visited[startVertex] = true;
-    q.push(startVertex);
+    q.push(start);
+    visited[start] = true;
 
     cout << "BFS: ";
     while (!q.empty()) {
-        int vertex = q.front();
+        int v = q.front();
         q.pop();
-        cout << vertex << " ";
-
-        for (int neighbor : adjList[vertex]) {
+        cout << v << " ";
+        for (int neighbor : adjList[v]) {
             if (!visited[neighbor]) {
                 visited[neighbor] = true;
                 q.push(neighbor);
             }
         }
     }
-    cout << endl;
 }
 
 int main() {
     setlocale(LC_ALL, "RUS");
+    //ввод с ребрами
     int n, m;
     cout << "Введите количество вершин и рёбер: ";
     cin >> n >> m;
 
-    vector<vector<int>> adjList(n);  // Нумерация с 0
+    vector<set<int>> adjList(n);
 
-    cout << "Введите рёбра (пары вершин):\n";
+    cout << "Введите " << m << " рёбер (пары вершин):\n";
     for (int i = 0; i < m; ++i) {
         int u, v;
         cin >> u >> v;
-        adjList[u].push_back(v);
-        adjList[v].push_back(u);  // Граф неориентированный
+        adjList[u].insert(v);
+        adjList[v].insert(u);
     }
-
-    int startVertex;
-    cout << "Введите стартовую вершину: ";
-    cin >> startVertex;
-
-    DFS(startVertex, adjList);  // DFS со стеком
-    BFS(startVertex, adjList);        // BFS
-
+    int start;
+    cout << "Стартовая вершина для BFS и DFS: ";
+    cin >> start;
+    DFS(n, adjList, start);
+    BFS(n, adjList, start);
     return 0;
 }
