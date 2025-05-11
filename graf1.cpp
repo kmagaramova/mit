@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void printAdjList(const vector<set<int>>& adjList) {
+void printAdjList(const vector<set<int>>& adjList) {//функция вывода списка смежности
     cout << "\nТекущий список смежности:\n";
     for (int i = 0; i < adjList.size(); ++i) {
         cout << i << ": ";
@@ -18,7 +18,7 @@ void printAdjList(const vector<set<int>>& adjList) {
     }
 }
 
-void DFS(int n, vector<set<int>> adjList, int start) {
+void DFS(int n, vector<set<int>> adjList, int start) {//обход в глубину
     vector<bool> visited(n, false);
     stack<int> s;
     s.push(start);
@@ -38,7 +38,7 @@ void DFS(int n, vector<set<int>> adjList, int start) {
     cout << endl;
 }
 
-void BFS(int n, vector<set<int>> adjList, int start) {
+void BFS(int n, vector<set<int>> adjList, int start) {//обход в ширину
     vector<bool> visited(n, false);
     queue<int> q;
     q.push(start);
