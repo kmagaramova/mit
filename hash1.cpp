@@ -48,6 +48,29 @@ void print(list* h) {
     }
 }
 
+// Функция для удаления элемента из двусвязного списка
+void deleteNode(list*& head, list*& tail, list* nodeToDelete) {
+    if (!nodeToDelete) return;
+
+    // Обновляем связи соседних элементов
+    if (nodeToDelete->prev) {
+        nodeToDelete->prev->next = nodeToDelete->next;
+    }
+    else {
+        head = nodeToDelete->next; // Удаляем первый элемент
+    }
+
+    if (nodeToDelete->next) {
+        nodeToDelete->next->prev = nodeToDelete->prev;
+    }
+    else {
+        tail = nodeToDelete->prev; // Удаляем последний элемент
+    }
+
+    // Освобождаем память
+    delete nodeToDelete;
+}
+
 // Хэш-функция (метод деления по зарплате)
 int hashFunction(int salary, int tableSize) {
     return salary % tableSize;
@@ -113,29 +136,25 @@ void deleteFromHashTable(list** hashTable, int salary, int tableSize) {
     cout << "Deleting from bucket " << index << " for salary " << salary << ":" << endl;
 
     list* p = hashTable[index];
+    list* tail = nullptr;
+    // Найдем хвост списка (если он есть)
+    if (p) {
+        tail = p;
+        while (tail->next) {
+            tail = tail->next;
+        }
+    }
+
     bool deleted = false;
     while (p) {
         if (p->inf.salary == salary) {
-            // Удаление элемента из списка
-            if (p->prev) {
-                p->prev->next = p->next;
-            }
-            else {
-                hashTable[index] = p->next;
-            }
-            if (p->next) {
-                p->next->prev = p->prev;
-            }
-
-            list* toDelete = p;
-            p = p->next;
-
-            cout << "Deleted: " << toDelete->inf.surname << " " << toDelete->inf.pos << " "
-                << toDelete->inf.birthDay << "." << toDelete->inf.birthMonth << "." << toDelete->inf.birthYear << " "
-                << toDelete->inf.experience << " years " << toDelete->inf.salary << " RUB" << endl;
-
-            delete toDelete;
+            list* nextNode = p->next; // Сохраняем указатель на следующий узел перед удалением
+            cout << "Deleted: " << p->inf.surname << " " << p->inf.pos << " "
+                << p->inf.birthDay << "." << p->inf.birthMonth << "." << p->inf.birthYear << " "
+                << p->inf.experience << " years " << p->inf.salary << " RUB" << endl;
+            deleteNode(hashTable[index], tail, p);
             deleted = true;
+            p = nextNode; // Переходим к следующему узлу
         }
         else {
             p = p->next;
@@ -146,7 +165,6 @@ void deleteFromHashTable(list** hashTable, int salary, int tableSize) {
         cout << "No employees with salary " << salary << " found to delete." << endl;
     }
 }
-
 vector<date> readFromFile(const string& filename) {
     ifstream inFile(filename);
     vector<date> employees;
