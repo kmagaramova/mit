@@ -93,8 +93,8 @@ int main() {
     for (int i = 0; i < m; ++i) {
         int u, v, w;
         cin >> u >> v >> w;
-        adjList[u].emplace_back(v, w);
-        adjList[v].emplace_back(u, w);
+        adjList[u].push_back(Edge(v, w));
+        adjList[v].push_back(Edge(u, w));
     }
 
     printAdjList(adjList);
